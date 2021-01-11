@@ -8,21 +8,22 @@
 
 <script>
 export default {
-  name: 'NavBar',
+  name: "NavBar",
 };
 </script>
 
 <style  scoped>
- .nav-bar {
-   display: flex;
-   height: 44px;
-   line-height: 44px;
-   text-align: center;
- }
- .left,.right {
-   width: 60px;
- }
- .center {
-   flex: 1;
- }
+.nav-bar {
+  display: flex;
+  height: 44px;
+  line-height: 44px;
+  text-align: center;
+}
+.left,
+.right {
+  width: 60px;
+}
+.center {
+  flex: 1;
+}
 </style>

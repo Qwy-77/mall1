@@ -1,6 +1,6 @@
 import { request } from "./request";
 
-export function gteHoMultidata() {
+export function getHomeMultidata() {
   return request({
     url: "/home/multidata"
   });
