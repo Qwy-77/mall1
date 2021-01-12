@@ -1,6 +1,6 @@
 <template>
   <div class="good-item">
-    <img :src="goodItem.show.img" alt="" />
+    <img :src="goodItem.show.img" alt="" @load="imgLoad" />
     <div class="goods-info">
       <p>{{ goodItem.title }}</p>
       <span class="price">￥{{ goodItem.price }}</span>
@@ -18,6 +18,12 @@ export default {
       default() {
         return {};
       },
+    },
+  },
+  methods: {
+    imgLoad() {
+      // 图片每加载完毕一张就 发射一次 事件出去
+      this.$bus.$emit("itemIamageLoad");
     },
   },
 };

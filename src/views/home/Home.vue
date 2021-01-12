@@ -1,117 +1,27 @@
 <template>
   <div id="home">
     <NavBar class="home-nav"><div slot="center">购物街</div></NavBar>
-    <HomeSwiper :banners="banners"></HomeSwiper>
-    <RecommendView :recommends="recommends"></RecommendView>
-    <FeatureView></FeatureView>
-    <TabControl
-      class="tab-control"
-      :titles="['流行', '新款', '精选']"
-      @tabClick="tabClick"
-    ></TabControl>
-    <GoodsList :goods="showGoods"></GoodsList>
-    <ul>
-      <li>列表1</li>
-      <li>列表2</li>
-      <li>列表3</li>
-      <li>列表4</li>
-      <li>列表5</li>
-      <li>列表6</li>
-      <li>列表7</li>
-      <li>列表8</li>
-      <li>列表9</li>
-      <li>列表10</li>
-      <li>列表11</li>
-      <li>列表12</li>
-      <li>列表13</li>
-      <li>列表14</li>
-      <li>列表15</li>
-      <li>列表16</li>
-      <li>列表17</li>
-      <li>列表18</li>
-      <li>列表19</li>
-      <li>列表20</li>
-      <li>列表21</li>
-      <li>列表22</li>
-      <li>列表23</li>
-      <li>列表24</li>
-      <li>列表25</li>
-      <li>列表26</li>
-      <li>列表27</li>
-      <li>列表28</li>
-      <li>列表29</li>
-      <li>列表30</li>
-      <li>列表31</li>
-      <li>列表32</li>
-      <li>列表33</li>
-      <li>列表34</li>
-      <li>列表35</li>
-      <li>列表36</li>
-      <li>列表37</li>
-      <li>列表38</li>
-      <li>列表39</li>
-      <li>列表40</li>
-      <li>列表41</li>
-      <li>列表42</li>
-      <li>列表43</li>
-      <li>列表44</li>
-      <li>列表45</li>
-      <li>列表46</li>
-      <li>列表47</li>
-      <li>列表48</li>
-      <li>列表49</li>
-      <li>列表50</li>
-      <li>列表51</li>
-      <li>列表52</li>
-      <li>列表53</li>
-      <li>列表54</li>
-      <li>列表55</li>
-      <li>列表56</li>
-      <li>列表57</li>
-      <li>列表58</li>
-      <li>列表59</li>
-      <li>列表60</li>
-      <li>列表61</li>
-      <li>列表62</li>
-      <li>列表63</li>
-      <li>列表64</li>
-      <li>列表65</li>
-      <li>列表66</li>
-      <li>列表67</li>
-      <li>列表68</li>
-      <li>列表69</li>
-      <li>列表70</li>
-      <li>列表71</li>
-      <li>列表72</li>
-      <li>列表73</li>
-      <li>列表74</li>
-      <li>列表75</li>
-      <li>列表76</li>
-      <li>列表77</li>
-      <li>列表78</li>
-      <li>列表79</li>
-      <li>列表80</li>
-      <li>列表81</li>
-      <li>列表82</li>
-      <li>列表83</li>
-      <li>列表84</li>
-      <li>列表85</li>
-      <li>列表86</li>
-      <li>列表87</li>
-      <li>列表88</li>
-      <li>列表89</li>
-      <li>列表90</li>
-      <li>列表91</li>
-      <li>列表92</li>
-      <li>列表93</li>
-      <li>列表94</li>
-      <li>列表95</li>
-      <li>列表96</li>
-      <li>列表97</li>
-      <li>列表98</li>
-      <li>列表99</li>
-      <li>列表100</li>
-    </ul>
+
+    <Scroll
+      class="content"
+      ref="scroll"
+      :probeType="3"
+      @scroll="contentScroll"
+      :pullUpLoad="true"
+      @pullingUp="loadMore"
+    >
+      <HomeSwiper :banners="banners"></HomeSwiper>
+      <RecommendView :recommends="recommends"></RecommendView>
+      <FeatureView></FeatureView>
+      <TabControl
+        class="tab-control"
+        :titles="['流行', '新款', '精选']"
+        @tabClick="tabClick"
+      ></TabControl>
+      <GoodsList :goods="showGoods"></GoodsList>
+    </Scroll>
+
+    <BackTop @click.native="backClick" v-show="isShowBackTop"></BackTop>
   </div>
 </template>
 
@@ -120,6 +30,8 @@
 import NavBar from "components/common/navbar/NavBar";
 import TabControl from "components/content/tabControl/TabControl";
 import GoodsList from "components/content/goods/GoodsList.vue";
+import Scroll from "components/common/scroll/Scroll.vue";
+import BackTop from "components/content/backTop/BackTop";
 
 // 业务组件
 import HomeSwiper from "./childComps/HomeSwiper";
@@ -134,6 +46,8 @@ export default {
     NavBar,
     TabControl,
     GoodsList,
+    Scroll,
+    BackTop,
 
     HomeSwiper,
     RecommendView,
@@ -149,6 +63,7 @@ export default {
         sell: { page: 0, list: [] },
       },
       currenType: "pop",
+      isShowBackTop: false,
     };
   },
   created() {
@@ -158,6 +73,11 @@ export default {
     this.getHomeGoods("pop");
     this.getHomeGoods("new");
     this.getHomeGoods("sell");
+
+    // 接收 GoodsListItem 里面发送的 图片加载完毕 事件
+    this.$bus.$on("itemIamageLoad", () => {
+      this.$refs.scroll.refresh();
+    });
   },
   methods: {
     // 事件监听相关方法
@@ -174,6 +94,22 @@ export default {
           break;
       }
     },
+
+    backClick() {
+      // 当点击 BackTop 组件时 通过 scroll组件的 ref 属性拿到该组件 并使用该组件里面的 scroll.scrollTo() 方法实现返回顶部
+      this.$refs.scroll.scrollTo(0, 0, 500);
+    },
+
+    contentScroll(position) {
+      // 如果  -position.y 的值(纵坐标) 大于 1000   this.isShowBackTop 就位 ture  则就让 返回按钮显示 否则就隐藏
+      this.isShowBackTop = -position.y > 1000;
+    },
+
+    loadMore() {
+      // 能够监听到上拉加载更多事件后 就再向服务器请求 当前点击的类型款数据 里面的 第二页数据 以此类推
+      this.getHomeGoods(this.currenType);
+    },
+
     // 网络请求相关方法
     getHomeMultidatas() {
       getHomeMultidata().then((res) => {
@@ -190,6 +126,8 @@ export default {
         // 利用 数组解构方法 把数组里面的每一条数据 添加到 list数组里面的去
         this.goods[type].list.push(...res.data.data.list);
         this.goods[type].page += 1;
+        // 此方法可以继续触发 加载事件
+        this.$refs.scroll.finishPullUps();
       });
     },
   },
@@ -205,6 +143,8 @@ export default {
 #home {
   padding-top: 44px;
   /* height: 10000px; */
+  height: 100vh;
+  position: relative;
 }
 .home-nav {
   background-color: var(--color-tint);
@@ -221,4 +161,20 @@ export default {
   top: 44px;
   z-index: 99;
 }
+.content {
+  /* height: 1000px; */
+  overflow: hidden;
+  position: absolute;
+  top: 44px;
+  bottom: 49px;
+  left: 0;
+  right: 0;
+}
+
+/* 计算高度方法 */
+/* .content {
+  height: calc(100% - 93px);
+  overflow: hidden;
+  margin-top: 44px;
+} */
 </style>
