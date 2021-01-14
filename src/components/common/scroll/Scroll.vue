@@ -44,14 +44,18 @@ export default {
     // console.log(this.scroll);
   },
   methods: {
+    //滚动到某个位置的 方法
     scrollTo(x, y, time = 300) {
-      this.scroll.scrollTo(x, y, time);
+      this.scroll && this.scroll.scrollTo(x, y, time);
     },
     finishPullUps() {
       this.scroll.finishPullUp();
     },
     refresh() {
-      this.scroll.refresh();
+      this.scroll && this.scroll.refresh();
+    },
+    getScrollY() {
+      return this.scroll ? this.scroll.y : null;
     },
   },
 };

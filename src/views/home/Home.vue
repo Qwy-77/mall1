@@ -1,6 +1,14 @@
 <template>
   <div id="home">
     <NavBar class="home-nav"><div slot="center">购物街</div></NavBar>
+    <!-- 复用 tabControl -->
+    <TabControl
+      :titles="['流行', '新款', '精选']"
+      @tabClick="tabClick"
+      ref="tabControl1"
+      class="tabControl"
+      v-show="isTabShow"
+    ></TabControl>
 
     <Scroll
       class="content"
@@ -10,13 +18,16 @@
       :pullUpLoad="true"
       @pullingUp="loadMore"
     >
-      <HomeSwiper :banners="banners"></HomeSwiper>
+      <HomeSwiper
+        :banners="banners"
+        @SwiperImageLoad="SwiperImageLoad"
+      ></HomeSwiper>
       <RecommendView :recommends="recommends"></RecommendView>
       <FeatureView></FeatureView>
       <TabControl
-        class="tab-control"
         :titles="['流行', '新款', '精选']"
         @tabClick="tabClick"
+        ref="tabControl2"
       ></TabControl>
       <GoodsList :goods="showGoods"></GoodsList>
     </Scroll>
@@ -40,6 +51,7 @@ import FeatureView from "./childComps/FeatureView";
 
 // 方法
 import { getHomeMultidata, getHomeGoods } from "network/home";
+import { debounce } from "../../common/utils";
 export default {
   name: "Home",
   components: {
@@ -64,6 +76,9 @@ export default {
       },
       currenType: "pop",
       isShowBackTop: false,
+      tabOffsetTop: 0,
+      isTabShow: false,
+      saveY: 0,
     };
   },
   created() {
@@ -73,10 +88,13 @@ export default {
     this.getHomeGoods("pop");
     this.getHomeGoods("new");
     this.getHomeGoods("sell");
-
+  },
+  mounted() {
+    //图片加载完成事件监听
+    const refresh = debounce(this.$refs.scroll.refresh, 200);
     // 接收 GoodsListItem 里面发送的 图片加载完毕 事件
     this.$bus.$on("itemIamageLoad", () => {
-      this.$refs.scroll.refresh();
+      this.$refs.scroll && refresh();
     });
   },
   methods: {
@@ -93,6 +111,8 @@ export default {
           this.currenType = "sell";
           break;
       }
+      this.$refs.tabControl1.currentIndex = index;
+      this.$refs.tabControl2.currentIndex = index;
     },
 
     backClick() {
@@ -103,12 +123,22 @@ export default {
     contentScroll(position) {
       // 如果  -position.y 的值(纵坐标) 大于 1000   this.isShowBackTop 就位 ture  则就让 返回按钮显示 否则就隐藏
       this.isShowBackTop = -position.y > 1000;
+      // 决定 tabControl 是否吸顶
+      this.isTabShow = -position.y >= this.tabOffsetTop;
     },
 
     loadMore() {
       // 能够监听到上拉加载更多事件后 就再向服务器请求 当前点击的类型款数据 里面的 第二页数据 以此类推
       this.getHomeGoods(this.currenType);
     },
+
+    SwiperImageLoad() {
+      // 获取 tabControl的 offsetTop 值 完成吸顶功能
+      // 所有组件都有一个属性 $el 用于获取组件中的元素
+      this.tabOffsetTop = this.$refs.tabControl2.$el.offsetTop;
+    },
+
+    // 防抖 函数 解决 调用 refresh次数频繁的问题
 
     // 网络请求相关方法
     getHomeMultidatas() {
@@ -136,13 +166,23 @@ export default {
       return this.goods[this.currenType].list;
     },
   },
+
+  // 配合 keep-alive 使用  组件属于活跃时执行  进来该组件时 让页面停在之前记录的位置
+  // 回来时最好先进行一次 刷新
+  activated() {
+    this.$refs.scroll.refresh();
+    this.$refs.scroll.scrollTo(0, this.saveY, 0);
+  },
+  // 组件属于不活跃(离开了该组件时) 记录浏览的位置
+  deactivated() {
+    this.saveY = this.$refs.scroll.getScrollY();
+  },
 };
 </script>
 
 <style scoped>
 #home {
-  padding-top: 44px;
-  /* height: 10000px; */
+  /* padding-top: 44px; */
   height: 100vh;
   position: relative;
 }
@@ -150,19 +190,13 @@ export default {
   background-color: var(--color-tint);
   color: #ffffff;
 
-  position: fixed;
+  /* position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  z-index: 99;
-}
-.tab-control {
-  position: sticky;
-  top: 44px;
-  z-index: 99;
+  z-index: 99; */
 }
 .content {
-  /* height: 1000px; */
   overflow: hidden;
   position: absolute;
   top: 44px;
@@ -170,7 +204,10 @@ export default {
   left: 0;
   right: 0;
 }
-
+.tabControl {
+  position: relative;
+  z-index: 99;
+}
 /* 计算高度方法 */
 /* .content {
   height: calc(100% - 93px);

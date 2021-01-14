@@ -4,7 +4,7 @@ import router from "./router/index";
 
 Vue.config.productionTip = false;
 
-// 让 Vue实例 等于 创建出来的 $bus
+// 让 Vue实例 等于 创建出来的 $bus  事件总线
 Vue.prototype.$bus = new Vue();
 
 new Vue({
