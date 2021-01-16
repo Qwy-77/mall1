@@ -81,7 +81,7 @@ export default {
 
 .shop-top .title {
   margin-left: 10px;
-  vertical-align: center;
+  vertical-align: middle;
 }
 
 .shop-middle {

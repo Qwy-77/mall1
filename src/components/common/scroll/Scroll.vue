@@ -48,12 +48,15 @@ export default {
     scrollTo(x, y, time = 300) {
       this.scroll && this.scroll.scrollTo(x, y, time);
     },
+    // 上拉加载更多
     finishPullUps() {
       this.scroll.finishPullUp();
     },
+    // 刷新页面可以滚动的距离
     refresh() {
       this.scroll && this.scroll.refresh();
     },
+    // 获取当前手指在界面的 y 轴
     getScrollY() {
       return this.scroll ? this.scroll.y : null;
     },

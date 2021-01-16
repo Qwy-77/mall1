@@ -9,6 +9,12 @@ export function getDetail(iid) {
   });
 }
 
+export function getRecommend() {
+  return request({
+    url: "/recommend"
+  });
+}
+
 // 把需要用到的 复杂的数据 整合到一起之后再传递出去
 export class Goods {
   constructor(itemInfo, columns, services) {
@@ -24,6 +30,7 @@ export class Goods {
   }
 }
 
+// 穿着效果的一些数据
 export class Shop {
   constructor(shopInfo) {
     this.logo = shopInfo.shopLogo;
@@ -32,5 +39,14 @@ export class Shop {
     this.sells = shopInfo.cSells;
     this.score = shopInfo.score;
     this.goodsCount = shopInfo.cGoods;
+  }
+}
+
+// 评论 尺寸的一些数据
+export class GoodsParam {
+  constructor(info, rule) {
+    this.image = info.images ? info.images[0] : "";
+    this.infos = info.set;
+    this.sizes = rule.tables;
   }
 }

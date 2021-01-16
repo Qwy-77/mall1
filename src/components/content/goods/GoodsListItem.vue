@@ -1,6 +1,6 @@
 <template>
   <div class="good-item" @click="itemClick">
-    <img :src="goodItem.show.img" alt="" @load="imgLoad" />
+    <img v-lazy="getImg" alt="" @load="imgLoad" :key="getImg" />
     <div class="goods-info">
       <p>{{ goodItem.title }}</p>
       <span class="price">￥{{ goodItem.price }}</span>
@@ -27,6 +27,12 @@ export default {
     },
     itemClick() {
       this.$router.push("/detail/" + this.goodItem.iid);
+    },
+  },
+  computed: {
+    getImg() {
+      // 伪类拿到不同 数据下的 名称不一样的图片
+      return this.goodItem.img || this.goodItem.image || this.goodItem.show.img;
     },
   },
 };

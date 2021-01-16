@@ -9,6 +9,9 @@
         :detailInfo="detailInfo"
         @imageLoad="imageLoad"
       ></DetailGoodsInfo>
+      <DetailParamInfo :itemParams="itemParams"></DetailParamInfo>
+      <DetailCommentInfo :commentInfo="commentInfo"></DetailCommentInfo>
+      <DetailRecommendInfo :recommendList="recommendList"></DetailRecommendInfo>
     </Scroll>
   </div>
 </template>
@@ -19,10 +22,19 @@ import DetailSwiper from "./childrenComp/DetailSwiper";
 import DetailBaseInfo from "./childrenComp/DetailBaseInfo";
 import DetailShopInfo from "./childrenComp/DetailShopInfo";
 import DetailGoodsInfo from "./childrenComp/DetailGoodsInfo";
+import DetailParamInfo from "./childrenComp/DetailParamInfo";
+import DetailCommentInfo from "./childrenComp/DetailCommentInfo";
+import DetailRecommendInfo from "./childrenComp/DetailRecommendInfo";
 
 import Scroll from "components/common/scroll/Scroll";
 
-import { getDetail, Goods, Shop } from "network/detail";
+import {
+  getDetail,
+  getRecommend,
+  Goods,
+  Shop,
+  GoodsParam,
+} from "network/detail";
 
 export default {
   name: "Detail",
@@ -32,6 +44,9 @@ export default {
     DetailBaseInfo,
     DetailShopInfo,
     DetailGoodsInfo,
+    DetailParamInfo,
+    DetailCommentInfo,
+    DetailRecommendInfo,
 
     Scroll,
   },
@@ -42,6 +57,9 @@ export default {
       goods: {},
       shop: {},
       detailInfo: {},
+      itemParams: {},
+      commentInfo: {},
+      recommendList: [],
     };
   },
   created() {
@@ -67,8 +85,26 @@ export default {
 
       // 商品的详情数据  detailInfo
       this.detailInfo = data.detailInfo;
+
+      // 商品的 尺寸数据 和穿着效果 itemParams
+      this.itemParams = new GoodsParam(
+        data.itemParams.info,
+        data.itemParams.rule
+      );
+
+      // 用户评论信息 commentInfo
+      if (data.rate.list) {
+        this.commentInfo = data.rate.list[0];
+      }
+    });
+
+    getRecommend().then((res, error) => {
+      if (error) return;
+      console.log(res);
+      this.recommendList = res.data.data.list;
     });
   },
+
   methods: {
     imageLoad() {
       // 监听图片的加载 进行可滚动距离的刷新
