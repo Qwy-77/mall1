@@ -7,15 +7,17 @@
       </div>
       <div class="info-right"></div>
     </div>
-    <div class="info-key">{{ detailInfo.detailImage[0].key }}</div>
-    <div class="info-list">
-      <img
-        :src="item"
-        alt=""
-        v-for="(item, index) in detailInfo.detailImage[0].list"
-        :key="index"
-        @load="imageLoad"
-      />
+    <div v-for="(item, index) in detailInfo.detailImage" :key="index">
+      <div class="info-key">{{ item.key }}</div>
+      <div class="info-list">
+        <img
+          :src="item"
+          alt=""
+          v-for="(item, index) in item.list"
+          :key="index"
+          @load="imageLoad"
+        />
+      </div>
     </div>
   </div>
 </template>

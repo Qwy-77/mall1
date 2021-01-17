@@ -1,19 +1,12 @@
 <template>
   <div class="DetailRecommendInfo">
     <div class="info-header">热门推荐</div>
-    <GridView>
-      <GoodsListItem
-        v-for="(item, index) in recommendList"
-        :key="index"
-        :goodItem="item"
-      ></GoodsListItem>
-    </GridView>
+    <GoodsList :goods="recommendList"></GoodsList>
   </div>
 </template>
 
 <script>
-import GridView from "components/common/gridView/GridView";
-import GoodsListItem from "components/content/goods/GoodsListItem";
+import GoodsList from "components/content/goods/GoodsList";
 export default {
   name: "DetailRecommendInfo",
   props: {
@@ -22,8 +15,7 @@ export default {
     },
   },
   components: {
-    GridView,
-    GoodsListItem,
+    GoodsList,
   },
 };
 </script>

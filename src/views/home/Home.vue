@@ -51,7 +51,7 @@ import FeatureView from "./childComps/FeatureView";
 
 // 方法
 import { getHomeMultidata, getHomeGoods } from "network/home";
-import { debounce } from "../../common/utils";
+import { itemListenerMixin } from "../../common/mixin";
 export default {
   name: "Home",
   components: {
@@ -65,6 +65,7 @@ export default {
     RecommendView,
     FeatureView,
   },
+  mixins: [itemListenerMixin],
   data() {
     return {
       banners: [],
@@ -89,14 +90,7 @@ export default {
     this.getHomeGoods("new");
     this.getHomeGoods("sell");
   },
-  mounted() {
-    //图片加载完成事件监听
-    const refresh = debounce(this.$refs.scroll.refresh, 200);
-    // 接收 GoodsListItem 里面发送的 图片加载完毕 事件
-    this.$bus.$on("itemIamageLoad", () => {
-      this.$refs.scroll && refresh();
-    });
-  },
+  mounted() {},
   methods: {
     // 事件监听相关方法
     tabClick(index) {
@@ -161,6 +155,7 @@ export default {
       });
     },
   },
+
   computed: {
     showGoods() {
       return this.goods[this.currenType].list;

@@ -1,10 +1,13 @@
 <template>
   <div class="DetailParamInfo" v-if="Object.keys(itemParams).length !== 0">
-    <table class="info-sizes">
-      <tr v-for="(item, index) in itemParams.sizes[0]" :key="index">
-        <td v-for="(item, index) in item" :key="index">{{ item }}</td>
-      </tr>
-    </table>
+    <div v-for="(item, index) in itemParams.sizes" :key="index">
+      <table class="info-sizes">
+        <tr v-for="(item, index) in item" :key="index">
+          <td v-for="(item, index) in item" :key="index">{{ item }}</td>
+        </tr>
+      </table>
+    </div>
+
     <table class="info-set">
       <tr v-for="(item, index) in itemParams.infos" :key="index">
         <td class="info-key">{{ item.key }}</td>
@@ -30,7 +33,7 @@ export default {
 
 <style  scoped>
 .DetailParamInfo {
-  padding: 20px 15px;
+  padding: 10px 15px;
   border-top: 5px solid rgba(100, 100, 100, 0.08);
   border-bottom: 5px solid #f2f5f8;
 }
@@ -48,14 +51,14 @@ export default {
   border-bottom: 2px solid rgba(100, 100, 100, 0.1);
 }
 .info-sizes td {
-  padding: 10px 13px;
+  padding: 5px 10px;
 }
 .info-sizes td:nth-of-type(1) {
-  padding: 10px 70px 10px 0;
+  padding: 10px 50px 10px 0;
 }
-.info-sizes td:nth-of-type(2) {
+/* .info-sizes td:nth-of-type(2) {
   padding: 10px 25px;
-}
+} */
 .info-set .info-key {
   /*当value的数据量比较大的时候, 会挤到key,所以给一个固定的宽度*/
   width: 95px;

@@ -23,7 +23,11 @@ export default {
   methods: {
     imgLoad() {
       // 图片每加载完毕一张就 发射一次 事件出去
-      this.$bus.$emit("itemIamageLoad");
+      if (this.$route.path.indexOf("/home")) {
+        this.$bus.$emit("itemIamageLoad");
+      } else if (this.$route.path.indexOf("/detail")) {
+        this.$bus.$emit("itemIamageLoad");
+      }
     },
     itemClick() {
       this.$router.push("/detail/" + this.goodItem.iid);

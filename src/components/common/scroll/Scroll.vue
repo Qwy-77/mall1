@@ -48,7 +48,7 @@ export default {
     scrollTo(x, y, time = 300) {
       this.scroll && this.scroll.scrollTo(x, y, time);
     },
-    // 上拉加载更多
+    // 多次上拉加载更多
     finishPullUps() {
       this.scroll.finishPullUp();
     },
