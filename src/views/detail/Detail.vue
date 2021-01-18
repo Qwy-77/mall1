@@ -1,7 +1,11 @@
 <template>
   <div class="detail">
-    <DetailBar class="detail-bar" @itemClick="itemClick"></DetailBar>
-    <Scroll class="content" ref="scroll">
+    <DetailBar
+      class="detail-bar"
+      @itemClick="itemClick"
+      ref="navBar"
+    ></DetailBar>
+    <Scroll class="content" ref="scroll" @scroll="contentScroll" :probeType="3">
       <DetailSwiper :topImages="topImages"></DetailSwiper>
       <DetailBaseInfo :goods="goods"></DetailBaseInfo>
       <DetailShopInfo :shop="shop"></DetailShopInfo>
@@ -19,6 +23,8 @@
         ref="recommend"
       ></DetailRecommendInfo>
     </Scroll>
+    <DetailBottomBar @addToCart="addToCart"></DetailBottomBar>
+    <BackTop @click.native="backClick" v-show="isShowBackTop"></BackTop>
   </div>
 </template>
 
@@ -31,9 +37,11 @@ import DetailGoodsInfo from "./childrenComp/DetailGoodsInfo";
 import DetailParamInfo from "./childrenComp/DetailParamInfo";
 import DetailCommentInfo from "./childrenComp/DetailCommentInfo";
 import DetailRecommendInfo from "./childrenComp/DetailRecommendInfo";
+import DetailBottomBar from "./childrenComp/DetailBottomBar";
 
 import Scroll from "components/common/scroll/Scroll";
-import { itemListenerMixin } from "../../common/mixin";
+import BackTop from "components/content/backTop/BackTop";
+import { itemListenerMixin, backTopMixin } from "../../common/mixin";
 
 import {
   getDetail,
@@ -42,6 +50,7 @@ import {
   Shop,
   GoodsParam,
 } from "network/detail";
+
 import { debounce } from "../../common/utils";
 
 export default {
@@ -55,10 +64,12 @@ export default {
     DetailParamInfo,
     DetailCommentInfo,
     DetailRecommendInfo,
+    DetailBottomBar,
 
     Scroll,
+    BackTop,
   },
-  mixins: [itemListenerMixin],
+  mixins: [itemListenerMixin, backTopMixin],
   data() {
     return {
       iid: null,
@@ -71,6 +82,7 @@ export default {
       recommendList: [],
       themeTopY: [],
       getThemeTopY: null,
+      currentIndex: 0,
     };
   },
   created() {
@@ -79,7 +91,7 @@ export default {
 
     // 根据 iid 发送网络请求
     getDetail(this.iid).then((res) => {
-      // console.log(res);
+      console.log(res);
       const data = res.data.result;
       // 拿出 轮播图的 数据 tomImages
       this.topImages = data.itemInfo.topImages;
@@ -112,7 +124,7 @@ export default {
     // 请求 推荐数据
     getRecommend().then((res, error) => {
       if (error) return;
-      console.log(res);
+      // console.log(res);
       this.recommendList = res.data.data.list;
     });
 
@@ -123,7 +135,8 @@ export default {
       this.themeTopY.push(this.$refs.params.$el.offsetTop);
       this.themeTopY.push(this.$refs.comment.$el.offsetTop);
       this.themeTopY.push(this.$refs.recommend.$el.offsetTop);
-      console.log(this.themeTopY);
+      this.themeTopY.push(Number.MAX_VALUE);
+      // console.log(this.themeTopY);
     });
   },
 
@@ -140,12 +153,46 @@ export default {
     itemClick(index) {
       this.$refs.scroll.scrollTo(0, -this.themeTopY[index], 200);
     },
+
+    // 监听内容滚动 到某个位置
+    contentScroll(position) {
+      const positionY = -position.y;
+      // 跟主题的相对位置的值作比较 [0, 6093, 7133, 7464,]
+      const length = this.themeTopY.length;
+      for (let i = 0; i < length - 1; i++) {
+        if (
+          this.currentIndex != i &&
+          positionY >= this.themeTopY[i] &&
+          positionY < this.themeTopY[i + 1]
+        ) {
+          this.currentIndex = i;
+          this.$refs.navBar.currentItem = this.currentIndex;
+        }
+      }
+
+      //是否回到顶部 这个不能抽离到 mixin 中 可以在 mixin 中顶一个方法 然后这里调用
+      this.lintenShowBackTop(position);
+    },
+
+    // 添加到购物车
+    addToCart() {
+      // 1 将要添加到购物车的一些数据 整合
+      const product = {};
+      product.image = this.topImages[0];
+      product.title = this.goods.title;
+      product.desc = this.goods.desc;
+      product.price = this.goods.nowPrice;
+      product.iid = this.iid;
+
+      // 2 将这些数据传递到 store 里面的 state里面管理 通过 mutations
+      this.$store.commit("addCart", product);
+    },
   },
 };
 </script>
 
 <style  scoped>
-.detail { 
+.detail {
   /* height: 10000px; */
   position: relative;
   z-index: 199;
@@ -158,7 +205,7 @@ export default {
   background-color: #fff;
 }
 .content {
-  height: calc(100% - 44px);
+  height: calc(100% - 44px - 49px);
   background-color: #fff;
 }
 </style>

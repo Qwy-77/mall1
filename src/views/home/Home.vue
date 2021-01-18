@@ -51,7 +51,7 @@ import FeatureView from "./childComps/FeatureView";
 
 // 方法
 import { getHomeMultidata, getHomeGoods } from "network/home";
-import { itemListenerMixin } from "../../common/mixin";
+import { itemListenerMixin, backTopMixin } from "../../common/mixin";
 export default {
   name: "Home",
   components: {
@@ -65,7 +65,7 @@ export default {
     RecommendView,
     FeatureView,
   },
-  mixins: [itemListenerMixin],
+  mixins: [itemListenerMixin, backTopMixin],
   data() {
     return {
       banners: [],
@@ -76,7 +76,6 @@ export default {
         sell: { page: 0, list: [] },
       },
       currenType: "pop",
-      isShowBackTop: false,
       tabOffsetTop: 0,
       isTabShow: false,
       saveY: 0,
@@ -109,14 +108,10 @@ export default {
       this.$refs.tabControl2.currentIndex = index;
     },
 
-    backClick() {
-      // 当点击 BackTop 组件时 通过 scroll组件的 ref 属性拿到该组件 并使用该组件里面的 scroll.scrollTo() 方法实现返回顶部
-      this.$refs.scroll.scrollTo(0, 0, 500);
-    },
-
     contentScroll(position) {
       // 如果  -position.y 的值(纵坐标) 大于 1000   this.isShowBackTop 就位 ture  则就让 返回按钮显示 否则就隐藏
-      this.isShowBackTop = -position.y > 1000;
+      // 使用 mixin 里面 的 lintenShowBackTop 方法
+      this.lintenShowBackTop(position);
       // 决定 tabControl 是否吸顶
       this.isTabShow = -position.y >= this.tabOffsetTop;
     },

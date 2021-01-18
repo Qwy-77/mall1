@@ -25,7 +25,7 @@ export class Goods {
     this.discount = itemInfo.discountDesc; // 优惠价
     this.columns = columns; // 销量 收藏
     this.services = services; // 退货补运费
-    this.nowPrice = itemInfo.highNowPrice; // 现在的价格
+    this.nowPrice = itemInfo.lowNowPrice; // 现在的价格
     this.discountBgColor = itemInfo.discountBgColor; // 优惠价的动态颜色
   }
 }
