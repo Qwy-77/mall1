@@ -1,7 +1,10 @@
 <template>
   <div class="CartListItem">
     <div class="item-selector">
-      <CheckButton></CheckButton>
+      <CheckButton
+        :isChecked="product.checked"
+        @click.native="checkClick"
+      ></CheckButton>
     </div>
     <div class="item-img">
       <img :src="product.image" alt="" />
@@ -31,6 +34,12 @@ export default {
   },
   components: {
     CheckButton,
+  },
+  methods: {
+    checkClick() {
+      // 修改模型 state 里面的数据 实现 页面响应式改变
+      this.product.checked = !this.product.checked;
+    },
   },
 };
 </script>

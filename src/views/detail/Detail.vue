@@ -25,6 +25,7 @@
     </Scroll>
     <DetailBottomBar @addToCart="addToCart"></DetailBottomBar>
     <BackTop @click.native="backClick" v-show="isShowBackTop"></BackTop>
+    <Toast :message="message" :isShow="isShow"></Toast>
   </div>
 </template>
 
@@ -41,6 +42,8 @@ import DetailBottomBar from "./childrenComp/DetailBottomBar";
 
 import Scroll from "components/common/scroll/Scroll";
 import BackTop from "components/content/backTop/BackTop";
+import Toast from "components/common/toast/Toast";
+
 import { itemListenerMixin, backTopMixin } from "../../common/mixin";
 
 import {
@@ -68,6 +71,7 @@ export default {
 
     Scroll,
     BackTop,
+    Toast,
   },
   mixins: [itemListenerMixin, backTopMixin],
   data() {
@@ -83,6 +87,8 @@ export default {
       themeTopY: [],
       getThemeTopY: null,
       currentIndex: 0,
+      message: "",
+      isShow: false,
     };
   },
   created() {
@@ -185,7 +191,14 @@ export default {
       product.iid = this.iid;
 
       // 2 将这些数据传递到 store 里面的 state里面管理 通过 mutations
-      this.$store.commit("addCart", product);
+      this.$store.dispatch("addCart", product).then((res) => {
+        // 添加承购做出相应的提示
+        this.isShow = true;
+        this.message = res;
+        setTimeout(() => {
+          this.isShow = false;
+        }, 2000);
+      });
     },
   },
 };

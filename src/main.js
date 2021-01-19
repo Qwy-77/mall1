@@ -3,6 +3,7 @@ import App from "./App.vue";
 import router from "./router/index";
 import store from "./store/index";
 import VueLazyLoad from "vue-lazyload";
+import FastClick from "fastclick";
 
 Vue.config.productionTip = false;
 
@@ -14,6 +15,9 @@ Vue.use(VueLazyLoad, {
   preLoad: 1,
   loading: require("assets/img/common/placeholder.png")
 });
+
+//解决移动端300ms 的延迟问题
+FastClick.attach(document.body);
 
 new Vue({
   router,
