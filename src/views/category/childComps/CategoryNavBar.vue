@@ -31,6 +31,9 @@ export default {
   methods: {
     itemClick(index) {
       this.currentItem = index;
+      const maitKey = this.list[index].maitKey;
+      const miniWallkey = this.list[index].miniWallkey;
+      this.$emit("itemClick", maitKey, miniWallkey);
     },
   },
 };

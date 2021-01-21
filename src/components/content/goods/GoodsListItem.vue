@@ -35,7 +35,7 @@ export default {
   },
   computed: {
     getImg() {
-      // 伪类拿到不同 数据下的 名称不一样的图片
+      // 为了拿到不同 数据下的 名称不一样的图片
       return this.goodItem.img || this.goodItem.image || this.goodItem.show.img;
     },
   },
