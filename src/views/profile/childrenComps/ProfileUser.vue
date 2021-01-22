@@ -1,20 +1,39 @@
 <template>
-  <div class="ProfileUser">
-    <div class="user-info">
-      <div class="info-img">
-        <img src="~assets/img/common/user.jpg" alt="" />
-      </div>
-      <div class="info-title">
-        <div class="info-sp">登录/注册</div>
-        <div class="info-other">
-          <div class="info-icon"></div>
-          <div class="info-phone">暂无绑定手机号</div>
+  <div id="user-info">
+    <a href="#" class="clear-fix">
+      <slot name="user-icon">
+        <svg class="privateImage-svg left">
+          <use
+            xmlns:xlink="http://www.w3.org/1999/xlink"
+            xlink:href="#avatar-default"
+          ></use>
+        </svg>
+      </slot>
+      <div class="login-info left">
+        <slot name="user-nickname">
+          <div>登录/注册</div>
+        </slot>
+        <div class="phone">
+          <span>
+            <svg data-v-735ff1be="" fill="#fff" class="icon-mobile">
+              <use
+                data-v-735ff1be=""
+                xmlns:xlink="http://www.w3.org/1999/xlink"
+                xlink:href="#mobile"
+              ></use>
+            </svg>
+          </span>
+          <slot name="user-phone">暂无绑定手机号</slot>
         </div>
       </div>
-      <div class="info-right">
-        <i class="arrow-right"></i>
-      </div>
-    </div>
+      <svg data-v-735ff1be="" fill="#fff" class="arrow-svg right">
+        <use
+          data-v-735ff1be=""
+          xmlns:xlink="http://www.w3.org/1999/xlink"
+          xlink:href="#arrow-right"
+        ></use>
+      </svg>
+    </a>
   </div>
 </template>
 
@@ -25,38 +44,48 @@ export default {
 </script>
 
 <style  scoped>
-.user-info {
-  display: flex;
-  padding: 15px;
+#user-info {
   background-color: var(--color-tint);
-  color: #ffffff;
+  padding: 15px;
+  margin-top: -5px;
 }
-.info-img {
+
+#user-info .privateImage-svg {
   width: 60px;
   height: 60px;
-  margin-right: 12px;
+  background-color: #fff;
+  border-radius: 30px;
 }
-.info-img img {
-  width: 100%;
-  height: 100%;
+
+.left {
+  float: left;
 }
-.info-title {
-  flex: 1;
-  margin-top: 5px;
+
+#user-info .arrow-svg {
+  width: 11px;
+  height: 22px;
+  margin-top: 18px;
 }
-.info-other {
-  display: flex;
+
+#user-info .login-info {
+  color: #fff;
+  margin: 10px 0 0 10px;
+}
+
+#user-info .login-info .phone {
+  position: relative;
+
   font-size: 13px;
-  margin-top: 3px;
-}
-.info-other .info-icon {
-  font-family: "icomoon";
-  font-size: 17px;
   margin-top: 5px;
+  margin-left: 15px;
+  font-weight: 300;
 }
-.info-right {
-  width: 13px;
-  height: 13px;
-  margin-top: 16px;
+
+#user-info .login-info .phone .icon-mobile {
+  position: absolute;
+  width: 12px;
+  height: 18px;
+  left: -15px;
+  top: 0px;
 }
 </style>
